@@ -1,0 +1,27 @@
+#!/bin/bash
+
+EWW="$HOME/.local/bin/eww -c $HOME/.config/eww/bar/"
+FILE="$HOME/.cache/eww_launch.xyz"
+MONITOR=$($HOME/.local/bin/ext_monitor)
+# Run eww daemon if not running already
+if [[ ! `pidof eww` ]]; then
+	${EWW} daemon
+	sleep 1
+fi
+
+# Run eww
+run_eww() {
+	if [ $MONITOR = "up" ]; then
+		${EWW} open-many bar1 bar2 bar3 bar4
+	else
+		${EWW} open-many bar1 bar2 bar3
+	fi
+}
+
+if [[ ! -e "$FILE" ]]; then
+	touch "$FILE"
+	run_eww
+else
+	killall eww
+	rm "$FILE"
+fi

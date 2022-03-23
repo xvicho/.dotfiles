@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ext_monitor=$(xrandr --query | grep 'HDMI-1')
+if [[ $ext_monitor = *disconnected* ]]; then
+echo "down"
+else
+echo "up"
+fi
