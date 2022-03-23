@@ -1,0 +1,5 @@
+;; by Vicho#9170
+
+;; Workspaces
+(deflisten workspace "scripts/workspace")
+(deflisten workspace2 "scripts/workspace2")

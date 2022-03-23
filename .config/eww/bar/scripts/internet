@@ -1,0 +1,34 @@
+#!/bin/sh
+wifi="$(cat /sys/class/net/w*/operstate)"
+lan="$(cat /sys/class/net/e*/operstate)"
+
+symbol() {
+if [ "$lan" = up ]; then
+	echo ""
+elif [ "$wifi" = up ]; then
+	echo "直"
+else echo "睊" && exit
+fi
+
+}
+
+name() {
+if [ "$wifi" = up -o "$lan" = up ]; then
+	echo "$(nmcli | head -1 | awk -F 'to ' '{print $2}')"
+else
+	echo "Desconectado"
+fi
+}
+
+interface() {
+if [ "$lan" = up ]; then
+	echo "enp2s0f0"
+elif [ "$wifi" = up ]; then
+	echo "wlp3s0b1"
+fi
+}
+
+[ "$1" = "icon" ] && symbol && exit
+[ "$1" = "name" ] && name && exit
+[ "$1" = "interface" ] && interface && exit
+exit

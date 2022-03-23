@@ -1,0 +1,47 @@
+#!/bin/sh
+
+workspaces2() {
+# here are workspaces for external monitors
+ws7=7
+ws8=8
+ws9=9
+
+# Unoccupied
+un="0"
+
+# check if Occupied
+o7=$(bspc query -D -d .occupied --names | grep "7" )
+o8=$(bspc query -D -d .occupied --names | grep "8" )
+o9=$(bspc query -D -d .occupied --names | grep "9" )
+
+# check if Focused
+f7=$(bspc query -D -d focused --names | grep "7" )
+f8=$(bspc query -D -d focused --names | grep "8" )
+f9=$(bspc query -D -d focused --names | grep "9" )
+
+# check if Urgent
+#u1=$(bspc query -D -d .urgent --names | grep 1)
+#u2=$(bspc query -D -d .urgent --names | grep 2)
+#u3=$(bspc query -D -d .urgent --names | grep 3)
+#u4=$(bspc query -D -d .urgent --names | grep 4)
+#u5=$(bspc query -D -d .urgent --names | grep 5)
+
+ic_7=""
+ic_8=""
+ic_9=""
+if [ $f7 ]; then
+	ic_7=""
+elif [ $f8 ]; then
+	ic_8=""
+elif [ $f9 ]; then
+	ic_9=""
+fi
+
+echo 	"(box	:class \"works\" :orientation \"h\"	:halign \"center\"	:halign \"center\"	 :space-evenly \"false\" :spacing \"5\" (button :onclick \"bspc desktop -f $ws7\"	:class	\"$un$o7$f7\"	\"$ic_7\") (button :onclick \"bspc desktop -f $ws8\"	:class \"$un$o8$f8\"	 \"$ic_8\") (button :onclick \"bspc desktop -f $ws9\"	:class \"$un$o9$f9\" \"$ic_9\"))"
+
+}
+
+workspaces2
+bspc subscribe desktop node_transfer | while read -r _ ; do
+workspaces2
+done

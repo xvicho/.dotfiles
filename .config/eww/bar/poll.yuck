@@ -1,0 +1,27 @@
+;; by Vicho#9170
+
+;; Updates
+(defpoll updates-count :interval "300s" "scripts/updates")
+
+;; Battery
+(defpoll battery :interval "1s" "scripts/battery icon")
+(defpoll battery-cappacity :interval "1s" "scripts/battery percent")
+
+;; Internet
+(defpoll internet-icon :interval "1s" "scripts/internet icon")
+(defpoll internet-name :interval "1s" "scripts/internet name")
+(defpoll interface :interval "1s" "scripts/internet interface")
+;; Brightness
+(defpoll current-brightness :interval "1s" "brightnessctl -m -d intel_backlight | awk -F, '{print substr($4, 0, length($4)-1)}' | tr -d '%'")
+
+;; Volume
+(defpoll current-volume :interval "1s" "scripts/volum volumeper")
+(defpoll volume-icon :interval "1s" "scripts/volum icon")
+
+;; Time and Date
+(defpoll hour :interval "1s" "date '+%H'")
+(defpoll min :interval "1s" "date '+%M'")
+(defpoll large_date :interval "1s" "date '+%A %D %T'")
+(defpoll calendar_day :interval "10h" "date '+%d'")
+(defpoll calendar_month :interval "10h" "scripts/calendar")
+(defpoll calendar_year :interval "10h" "date '+%Y'")

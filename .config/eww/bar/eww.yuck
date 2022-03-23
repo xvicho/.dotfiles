@@ -1,0 +1,253 @@
+;; Created   by https://github.com/rxyhn
+;; Designed  by https://github.com/rxyhn
+;; Maintaned by https://github.com/rxyhn
+;; Formatting fix and mods by Vicho#9170
+
+;; Paths to eww binary and launch script ;;
+(include "poll.yuck")
+(include "vars.yuck")
+(include "listen.yuck")
+
+;;;;; Widgets section ;;;;;
+
+;; Launcher Widgets ;;
+(defwidget launcher []
+  (box :orientation "h"
+       :space-evenly "false"
+       :spacing 5
+  (button :class "launcher_icon"
+          :onclick "scripts/popup launcher"  "")))
+
+;; Workspaces Widgets ;;
+(defwidget workspaces []
+  (literal :content workspace))
+(defwidget workspaces2 []
+  (literal :content workspace2))
+;; Updates ;;
+(defwidget updates []
+  (eventbox :onhover "${eww} update counter=true"
+            :onhoverlost "${eww} update counter=false"
+    (box :orientation "h"
+         :space-evenly "false"
+         :spacing 2
+         :tooltip "${updates-count} Actualizaciones pendientes"
+      (revealer :transition "slideright"
+                :reveal counter
+                :duration "550ms"
+        (label :text "${updates-count}" :class "updates-name"))
+      (label :text "" :class "updates-icon"))))
+
+;; Battery Widgets ;;
+(defwidget bat []
+  (box :orientation "h"
+       :space-evenly "false"
+    (label :class "bat"
+           :halign "end"
+           :text "${battery}"
+           :tooltip "Batería: ${battery-cappacity}%")))
+;; Internet Widgets ;;
+(defwidget internet []
+  (eventbox :onhover "${eww} update name-updater=true"
+            :onhoverlost "${eww} update name-updater=false"
+    (box :orientation "h"
+         :space-evenly "false"
+         :spacing 2
+         :tooltip "${internet-name}"
+      (revealer :transition "slideright"
+                :reveal name-updater
+                :duration "550ms"
+        (label :text "${internet-name}|" :class "internet-name"))
+      (label :text "${round(EWW_NET[interface].NET_UP / 1000000, 2)}/${round(EWW_NET[interface].NET_DOWN / 1000000, 2)}" :class "internet-name")
+      (button :onclick "scripts/popup internet"
+              :class "internet-icon" "${internet-icon}"))))
+;; Brightness Widgets ;;
+(defwidget bright []
+  (eventbox :onhover "${eww} update bright=true"
+            :onhoverlost "${eww} update bright=false"
+    (box :orientation "h"
+         :space-evenly "false"
+         :spacing 2
+      (revealer :transition "slideright"
+                :reveal bright
+                :duration "550ms"
+        (scale :class "bribar"
+               :value "${current-brightness}"
+               :tooltip "Brillo: ${current-brightness}%"
+               :onchange "brightnessctl set {}%"
+               :orientation "h"
+               :flipped false
+               :max 101
+               :min 0))
+      (label :class "brightness-icon"
+             :text ""))))
+
+;; Volume Widgets ;;
+(defwidget volum []
+  (eventbox :onhover "${eww} update volum=true"
+            :onhoverlost "${eww} update volum=false"
+    (box :orientation "h"
+         :space-evenly "false"
+         :spacing "2"
+      (revealer :transition "slideright"
+                :reveal volum
+                :duration "550ms"
+        (scale :class "volbar"
+               :value "${current-volume}"
+               :orientation "h"
+               :flipped false
+               :tooltip "Volumen: ${current-volume}%"
+               :max 101
+               :min 0
+               :onchange "amixer set Master on | amixer sset Master {}%" ))
+      (button :onclick "${volume-toggle}" :onrightclick "scripts/popup audio" :class "volume-icon" "${volume-icon}"))))
+;; Control Panel Widgets ;;	
+(defwidget control []
+  (box :orientation "h"
+       :space-evenly false
+       :class "control"
+       :hexpand false
+    (updates)
+    (bat)
+    (bright)
+    (volum)
+    (internet)))
+
+;; Clock Widgets ;;
+(defwidget time []
+  (box :orientation "h"
+       :class "time"
+       :halign "center"
+       :space-evenly false
+       :tooltip "${large_date}"
+    (button :onclick "scripts/popup calendar"
+            :class "time-hour" "${hour}")
+    (button :onclick "scripts/popup calendar"
+      (label :text ":"))
+    (button :onclick "scripts/popup calendar"
+            :class "time-min"  "${min}")))
+;; Calendar Widgets ;;
+(defwidget cal []
+  (box :class "cal-box"
+       :orientation "h"
+    (box :class "cal-inner-box"
+      (calendar :class "cal"
+                :day "${calendar_day}"
+                :month "${calendar_month}"
+                :year "${calendar_year}"))))
+;; Powermenu Widgets ;;
+(defwidget power []
+  (eventbox :onhover "${eww} update power=true"
+            :onhoverlost "${eww} update power=false"
+            :halign "center"
+    (box :orientation "h"
+         :space-evenly "false"
+         :class "powermenu"
+      (revealer	:transition "slideleft"
+                :reveal power
+                :duration "550ms"
+                :halign "center"
+        (box :orientation "h"
+             :space-evenly "false"
+          (button :class "button-bspres"
+                  :tooltip "Reiniciar BSPWM"
+                  :onclick "bspc wm -r" "" )
+          (button :class "button-reb" 
+                  :tooltip "Reiniciar"
+                  :onclick "${barlauncher} | reboot" "")
+          (button :class "button-quit"
+                  :tooltip "Cerrar sesión"
+                  :onclick "killall bspwm" "")
+          (button :class "button-lock"
+                  :tooltip "Bloquear pantalla"
+                  :onclick "betterlockscreen -l" "")))
+      (button :class "button-off"
+              :tooltip "Apagar"
+              :onclick "${barlauncher} | shutdown now" ""))))
+
+;; Left side Widgets ;;
+(defwidget left []
+  (box :orientation "h"
+       :space-evenly false
+       :halign "center"
+       :spacing 10
+       :class "eww_bar"
+    (launcher)
+    (workspaces)))
+
+;; Center widgets ;;
+(defwidget center []
+  (box :orientation "h"
+       :space-evenly false
+       :halign "center"
+       :class "eww_bar"
+    (time)))
+
+;; Right side Widgets ;;
+(defwidget right []
+  (box :orientation "h"
+       :space-evenly "false"
+       :halign "end"
+       :spacing 5
+       :hexpand "false"
+       :class "eww_bar_fix"
+    (control)
+    (power)))
+
+;; Bar grouping Widget ;;
+(defwidget bar []
+  (box :class "eww_bar"
+       :orientation "h"
+       :vexpand "false"
+       :hexpand "false"
+    (left)
+    (center)
+    (right)))
+(defwidget extrabar []
+  (box :class "eww_bar"
+       :orientation "h"
+    (workspaces2)))
+
+;;;;;; Windows section ;;;;;;
+
+;; Bar Windows ;;
+(defwindow bar1 :geometry (geometry :x "5"
+                                   :y "5"
+                                   :height "1px"
+                                   :width "1px")
+               :monitor 0
+               :reserve (struts :distance "35px"
+                                :side "top")
+               :hexpand false
+               :vexpand false
+  (left))
+
+(defwindow bar2 :geometry (geometry :x "650"
+                                   :y "5"
+                                   :height "1px"
+                                   :width "1px")
+               :monitor 0
+               :hexpand false
+               :vexpand false
+  (center))
+
+(defwindow bar3 :geometry (geometry :x "-5"
+                                   :y "5"
+                                   :height "1px"
+                                   :width "1px"
+                                   :anchor "top right")
+               :monitor 0
+               :hexpand false
+               :vexpand false
+  (right))
+(defwindow bar4 :geometry (geometry :x "5"
+                                    :y "5"
+                                    :height "1px"
+                                    :width "1px")
+                :monitor 1
+  (extrabar))
+;; Calendar Window ;;
+(defwindow calendar :geometry (geometry :x "545px"
+                                        :y "45px"
+                                        :width "270px"
+                                        :height "55px")
+  (cal))

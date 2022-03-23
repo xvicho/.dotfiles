@@ -1,0 +1,21 @@
+;; by Vicho#9170
+
+;; Import eww binary and launching script
+(defvar eww "$HOME/.local/bin/eww -c $HOME/.config/eww/bar")
+(defvar barlauncher "$HOME/.local/bin/barlauncher")
+(defvar volume-toggle "$HOME/.local/bin/volume mute")
+;; Updates counter
+(defvar counter false)
+
+;; Internet SSID
+(defvar name-updater false)
+
+;; Bright
+(defvar bright false)
+
+;; Volume
+(defvar volum false)
+
+;; Power
+(defvar power false)
+

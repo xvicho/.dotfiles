@@ -1,0 +1,29 @@
+#!/bin/sh
+volper="$(amixer sget Master | grep '%' | awk -F'[][]' '{ print $2 }' | tr -d '%')"
+mute="$(amixer sget Master | grep '%' | awk -F'[][]' '{ print $6}')"
+
+icon() {
+
+if [ "$mute" = "off" ]; then
+	icon="婢"	
+elif [ "$volper" -gt "70" ]; then
+	icon="墳"
+elif [ "$volper" -gt "30" ]; then
+	icon="奔"
+elif [ "$volper" -gt "0" ]; then
+	icon="奄"
+else
+	echo 婢 && exit
+fi
+
+echo "$icon"
+
+}
+
+volumeper() {
+echo $volper
+}
+
+[ "$1" = "icon" ] && icon && exit
+[ "$1" = "volumeper" ] && volumeper && exit 
+exit
